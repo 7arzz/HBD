@@ -323,25 +323,16 @@
 
       .card-container {
         position: relative;
-        width: min(80%, 420px);
-        height: 110px;
+        width: min(90%, 420px);
+        min-height: 140px;
+        height: auto;
       }
 
       .msg-card {
         position: absolute;
         inset: 0;
-        background: rgba(20, 20, 20, 0.9);
-        border: 1px solid rgba(255, 64, 129, 0.4);
-        backdrop-filter: blur(12px);
-        padding: 18px 22px;
-        border-radius: 18px;
-        color: #ffb3d1;
-        font-size: 0.95rem;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(20px) scale(0.96);
-        transition: all 0.6s ease;
-        pointer-events: none;
+        padding: 20px;
+        line-height: 1.6;
       }
 
       .msg-card.active {
@@ -386,6 +377,30 @@
       #RepeatBtn:hover {
         background: rgba(255, 64, 129, 0.3);
         transform: scale(1.05);
+      }
+
+      @media (max-width: 600px) {
+        .msg-card {
+          font-size: 1.05rem;
+          padding: 22px 20px;
+          line-height: 1.7;
+        }
+
+        .card-container {
+          width: 92%;
+          min-height: 160px;
+        }
+
+        .nav-btn {
+          width: 48px;
+          height: 48px;
+          font-size: 26px;
+        }
+
+        .card-wrapper {
+          bottom: 24px;
+          gap: 16px;
+        }
       }
     </style>
     <link
