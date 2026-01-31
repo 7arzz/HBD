@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>I Love You Heart</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #000;
+        position: fixed;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      /* Container untuk semua elemen */
+      .scene {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      /* Intro animations */
+      .intro-effect {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .ring {
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: ringExpand 2s ease-out forwards;
+      }
+
+      .particle-burst {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ff4081;
+        box-shadow: 0 0 20px #ff4081;
+        opacity: 0;
+        animation: particleBurst 1.5s ease-out forwards;
+      }
+
+      /* Small falling hearts */
+      .falling-heart {
+        position: absolute;
+        color: #ff4081;
+        font-size: 24px;
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+        text-shadow: 0 0 15px rgba(255, 64, 129, 0.8);
+        top: -50px;
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+      }
+
+      /* Big heart container - BENAR-BENAR DI TENGAH */
+      .big-heart {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0;
+        z-index: 2;
+        transition:
+          transform 3s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 2.5s ease;
+        filter: drop-shadow(0 0 20px rgba(255, 64, 129, 0.6));
+        width: min(70vw, 70vh, 500px);
+        height: min(70vw, 70vh, 500px);
+        max-width: 500px;
+        max-height: 500px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Heart cell - each contains "I love you" text */
+      .heart-cell {
+        position: absolute;
+        color: #ff4081;
+        font-weight: bold;
+        font-size: clamp(10px, 1.8vw, 15px);
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.3) rotate(0deg);
+        transition:
+          opacity 1.2s ease,
+          transform 1.2s ease;
+        text-shadow: 0 0 10px rgba(255, 64, 129, 0.9);
+        white-space: nowrap;
+        animation: gentleFloat 6s infinite ease-in-out;
+      }
+
+      /* Animations */
+      @keyframes ringExpand {
+        0% {
+          width: 0;
+          height: 0;
+          border-color: rgba(255, 64, 129, 0);
+          opacity: 1;
+        }
+        50% {
+          border-color: rgba(255, 64, 129, 0.8);
+          opacity: 1;
+        }
+        100% {
+          width: 300px;
+          height: 300px;
+          border-color: rgba(255, 64, 129, 0);
+          opacity: 0;
+        }
+      }
+
+      @keyframes particleBurst {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.1);
+          box-shadow: 0 0 0 rgba(255, 64, 129, 0);
+        }
+        30% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+          box-shadow: 0 0 50px rgba(255, 64, 129, 0.8);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0);
+          box-shadow: 0 0 100px rgba(255, 64, 129, 0);
+        }
+      }
+
+      @keyframes fallingHeartAnimation {
+        0% {
+          opacity: 0;
+          transform: translateY(0) rotate(0deg);
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 0.8;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(calc(100vh + 100px)) rotate(360deg);
+        }
+      }
+
+      @keyframes gentleFloat {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        }
+        33% {
+          transform: translate(-50%, -50%) scale(1.05) rotate(120deg);
+        }
+        66% {
+          transform: translate(-50%, -50%) scale(1.03) rotate(240deg);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          text-shadow: 0 0 10px rgba(255, 64, 129, 0.7);
+          opacity: 0.9;
+        }
+        50% {
+          text-shadow:
+            0 0 25px rgba(255, 64, 129, 1),
+            0 0 40px rgba(255, 64, 129, 0.7);
+          opacity: 1;
+        }
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 15px rgba(255, 64, 129, 0.5));
+        }
+        50% {
+          filter: drop-shadow(0 0 30px rgba(255, 64, 129, 0.7))
+            drop-shadow(0 0 45px rgba(255, 64, 129, 0.4));
+        }
+      }
+
+      @keyframes textRotation {
+        0% {
+          transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1) rotate(360deg);
+        }
+      }
+
+      @keyframes orbitRotation {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg)
+            translateX(var(--orbit-radius)) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg)
+            translateX(var(--orbit-radius)) rotate(-360deg);
+        }
+      }
+
+      /* ===== MESSAGE CARD STACK ===== */
+      .message-cards {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        max-height: 45vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        overflow-y: auto;
+        padding-bottom: 20px;
+        z-index: 5;
+        pointer-events: auto;
+      }
+
+      .message-cards::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .message-cards::-webkit-scrollbar-thumb {
+        background: rgba(255, 64, 129, 0.4);
+        border-radius: 10px;
+      }
+
+      .msg-card {
+        background: rgba(20, 20, 20, 0.85);
+        border: 1px solid rgba(255, 64, 129, 0.4);
+        backdrop-filter: blur(14px);
+        padding: 16px 22px;
+        border-radius: 18px;
+        color: #ffb3d1;
+        font-size: 0.95rem;
+        max-width: 85%;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        transition: all 0.8s ease;
+        box-shadow: 0 10px 40px rgba(255, 64, 129, 0.25);
+      }
+
+      /*back*/
+      #backBtn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        padding: 10px 18px;
+        border-radius: 20px;
+        border: none;
+        background: rgba(255, 64, 129, 0.15);
+        color: #ff9fc5;
+        font-size: 0.85rem;
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+        z-index: 10;
+        transition: 0.3s ease;
+      }
+
+      #backBtn:hover {
+        background: rgba(255, 64, 129, 0.3);
+        transform: scale(1.05);
+      }
+
+      .card-wrapper {
+        position: fixed;
+        bottom: 40px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        gap: 12px;
+      }
+
+      .card-container {
+        position: relative;
+        width: min(80%, 420px);
+        height: 110px;
+      }
+
+      .msg-card {
+        position: absolute;
+        inset: 0;
+        background: rgba(20, 20, 20, 0.9);
+        border: 1px solid rgba(255, 64, 129, 0.4);
+        backdrop-filter: blur(12px);
+        padding: 18px 22px;
+        border-radius: 18px;
+        color: #ffb3d1;
+        font-size: 0.95rem;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+        transition: all 0.6s ease;
+        pointer-events: none;
+      }
+
+      .msg-card.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+
+      .nav-btn {
+        background: rgba(255, 64, 129, 0.15);
+        border: 1px solid rgba(255, 64, 129, 0.5);
+        color: #ffb3d1;
+        font-size: 22px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .nav-btn:hover {
+        background: rgba(255, 64, 129, 0.35);
+      }
+
+      /*Reload*/
+      #RepeatBtn {
+        position: fixed;
+        top: 90px;
+        left: 20px;
+        padding: 10px 18px;
+        border-radius: 20px;
+        border: none;
+        background: rgba(255, 64, 129, 0.15);
+        color: #ff9fc5;
+        font-size: 0.85rem;
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+        z-index: 10;
+        transition: 0.3s ease;
+      }
+
+      #RepeatBtn:hover {
+        background: rgba(255, 64, 129, 0.3);
+        transform: scale(1.05);
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="scene" id="scene">
+      <div class="big-heart" id="bigHeart"></div>
+    </div>
+
+    <!-- CARD WRAPPER -->
+    <div class="card-wrapper">
+      <button
+        class="nav-btn back"
+        onclick="prevCard()"
+        style="margin-right: 40px"
+      >
+        ‹
+      </button>
+
+      <div
+        class="card-container"
+        style="justify-content: center; align-items: center"
+      >
+        <div class="msg-card active">
+          Selamat bertambah usiaa adekk, makin sabar dan kuat yaaaa, doa yang
+          terbaik pokoknya buat adekk, tahun ini pasti banyak banget yaa impian
+          mu, semoga semua bakal terkabul satu persatu yaaaa
+        </div>
+
+        <div class="msg-card">
+          Happy Birthday buat kamu yang gatau punya siapaa
+        </div>
+
+        <div class="msg-card">
+          Semoga selalu mendapatkan hal hal yang baik, dimanapun firly berada,
+          semogaa firly selalu di kelilingi sama orang orang yang baik dan
+          peduli sama firly
+        </div>
+
+        <div class="msg-card">
+          Semoga semua cita citamu terwujud, semoga kamu berhasil membahagiakan
+          orang tua muu
+        </div>
+        <div class="msg-card">
+          Teruslah tumbuh, maafkan aku ga bisa selalu nemenin kamu dalam setiap
+          prosesmu <br />
+          tapi doaku selalu yang terbaik buat kamu
+        </div>
+
+        <div class="msg-card">
+          Makasih yaaa, udah nemenin aku sampai sejauh inii <br />
+          maaf juga kalo aku kadang nyebelin
+        </div>
+
+        <div class="msg-card">❤️ Love You ❤️</div>
+
+        <div class="msg-card">
+          Mengetahui segala segala kegiatanmu dari jauh itu rasanya bahagiaaa
+          <br />
+          tapi itu duluu, sekarang aku cuma bisa berharap yang terbaik buat kamu
+        </div>
+
+        <div class="msg-card">
+          Makasih yaa udah bikin aku jadi diriku sendiri, <br />
+          aku beruntung banget udah ketemu kamu!!! <br />
+          i'm also very lucky to have you in my life, love you so muchhh
+        </div>
+
+        <div class="msg-card">
+          kalau ada apa apa jangan sungkan buat cerita ke aku yaa, <br />
+          Jangan di pendam sendiri lukamuu <br />
+          aku ada di sini kokkk
+        </div>
+
+        <div class="msg-card">
+          kalau ada 1000 alasan buat menyerah, <br />
+          kita cari 1001 alasan buat tetap bertahan
+        </div>
+
+        <div class="msg-card">
+          Everything is so much more perfect when I'm with you <br />
+          even the bad times feel better when I'm with you
+        </div>
+
+        <div class="msg-card">
+          aku suka weekend, tapi aku lebih suka with you till the end <br />
+          anjayyy
+        </div>
+
+        <div class="msg-card">
+          Everything is so much more perfect when I'm with you <br />
+          aku tau kamu bisa kokk lewatin proses yang berat ini
+        </div>
+
+        <div class="msg-card">
+          Aku percaya kamu orang yang kuat, <br />
+          kamu pasti bisa lewatin semua ini dengan baik
+        </div>
+
+        <div class="msg-card">
+          Haii,... <br />
+          aku mau bilang jika dunia tidak berpihak pada mu, aku bakal tetap ada
+          buat kamu,<br />
+          jangan sungkan buat ceritaaaa, kayak sama siapa ajaaa :)
+        </div>
+
+        <div class="msg-card">
+          Gagal itu biasa, <br />
+          bangkit lagi itu luar biasa <br />
+          Aku percaya kamu orang yang kuat, <br />
+          kamu pasti bisa lewatin semua ini dengan baik
+        </div>
+
+        <div class="msg-card">
+          jangan pernah insecure sama dirimu sendiri, <br />
+          kamu punya kelebihan yang orang lain ga punya lhooo
+        </div>
+
+        <div class="msg-card">
+          jangan lupa untuk bilang "MAKASIH" ke dirimu sendiri yaaaa, <br />
+          karena udah berjuang sejauh iniii
+        </div>
+
+        <div class="msg-card">
+          Aku harap kamu selalu ingat,<br />
+          bahwa kamu itu berhargaaa bangetttt
+        </div>
+
+        <div class="msg-card">
+          kalau dunia jahat ke kamu, kamu harus baik pada diri mu sendiri yaaaa
+          <br />
+          #prinsip
+        </div>
+
+        <div class="msg-card">
+          ketika hari mu terasa berat, <br />
+          maka jalani saja dulu, karena semua akan lewat begitu saja <br />
+          #IZINNN
+        </div>
+
+        <div class="msg-card">
+          Sekali lagi selamat ulang tahun yaa firly, semoga panjang umur, sehat
+          selalu, dan bahagiaa selalua <br />
+          amiin
+        </div>
+      </div>
+
+      <button class="nav-btn next" onclick="nextCard()">›</button>
+    </div>
+
+    <button id="backBtn">⟵ Back</button>
+    <!-- <button id="RepeatBtn">⟵ Repeat</button> -->
+
+    <script>
+      // DOM elements
+      const scene = document.getElementById("scene");
+      const bigHeart = document.getElementById("bigHeart");
+
+      // Animation state
+      let particles = [];
+      let heartCells = [];
+      let isHeartFormed = false;
+      let isAnimating = false;
+      let heartRainInterval;
+
+      // Initialize
+      function init() {
+        // Set ukuran scene
+        resizeScene();
+
+        // Prevent semua scroll dan geser
+        preventAllScroll();
+
+        // Mulai dengan animasi ring dan particle burst
+        startIntroAnimations();
+
+        // Event listeners
+        window.addEventListener("resize", resizeScene);
+
+        // Klik untuk restart animasi
+        scene.addEventListener("click", restartAnimation);
+      }
+
+      // Prevent semua scroll dan geser
+      function preventAllScroll() {
+        document.body.style.overflow = "hidden";
+      }
+
+      // Set ukuran scene
+      function resizeScene() {
+        scene.style.width = window.innerWidth + "px";
+        scene.style.height = window.innerHeight + "px";
+      }
+
+      // Start intro animations
+      function startIntroAnimations() {
+        // ANIMASI 1: Lingkaran yang mengembang dari tengah
+        createRingAnimation();
+
+        // Setelah animasi pertama, tampilkan animasi kedua
+        setTimeout(() => {
+          // ANIMASI 2: Ledakan partikel di tengah
+          createParticleBurst();
+
+          // Setelah animasi kedua, mulai hujan hati tunggal
+          setTimeout(() => {
+            startHeartRain();
+
+            // Setelah hujan hati selesai, baru bentuk love besar
+            setTimeout(() => {
+              createHeartFormation();
+            }, 8000);
+          }, 800);
+        }, 2000);
+      }
+
+      // Animasi 1: Lingkaran yang mengembang
+      function createRingAnimation() {
+        const ring = document.createElement("div");
+        ring.className = "ring";
+        scene.appendChild(ring);
+
+        // Hapus setelah animasi selesai
+        setTimeout(() => {
+          if (ring.parentNode) ring.remove();
+        }, 2000);
+      }
+
+      // Animasi 2: Ledakan partikel
+      function createParticleBurst() {
+        const burst = document.createElement("div");
+        burst.className = "particle-burst";
+        scene.appendChild(burst);
+
+        // Hapus setelah animasi selesai
+        setTimeout(() => {
+          if (burst.parentNode) burst.remove();
+        }, 1500);
+      }
+
+      // Hujan hati tunggal dari atas ke bawah
+      function startHeartRain() {
+        const heartCount = 40;
+
+        // Clear interval sebelumnya jika ada
+        if (heartRainInterval) clearInterval(heartRainInterval);
+
+        let heartCreated = 0;
+
+        heartRainInterval = setInterval(() => {
+          if (heartCreated < heartCount) {
+            createFallingHeart();
+            heartCreated++;
+          } else {
+            clearInterval(heartRainInterval);
+          }
+        }, 200);
+      }
+
+      // Membuat hati kecil yang jatuh
+      function createFallingHeart() {
+        const heart = document.createElement("div");
+        heart.className = "falling-heart";
+        heart.innerHTML = "❤";
+
+        // Random horizontal position
+        const leftPos = 10 + Math.random() * 80;
+        heart.style.left = `${leftPos}%`;
+
+        // Random color
+        const hue = 330 + Math.random() * 30;
+        heart.style.color = `hsl(${hue}, 100%, 65%)`;
+
+        // Random size
+        const size = 18 + Math.random() * 12;
+        heart.style.fontSize = `${size}px`;
+
+        // Random animation duration
+        const duration = 4 + Math.random() * 3;
+
+        // Set animation
+        heart.style.animation = `fallingHeartAnimation ${duration}s linear forwards`;
+
+        scene.appendChild(heart);
+        particles.push(heart);
+
+        // Remove after animation completes
+        setTimeout(() => {
+          if (heart.parentNode) {
+            heart.remove();
+            particles = particles.filter((p) => p !== heart);
+          }
+        }, duration * 1000);
+      }
+
+      // Generate heart points - DI TENGAH SEMPURNA
+      function generateHeartPoints(centerX, centerY, size) {
+        const points = [];
+        const step = 0.025;
+
+        for (let t = 0; t < 2 * Math.PI; t += step) {
+          // Heart parametric equations
+          const x = 16 * Math.pow(Math.sin(t), 3);
+          const y =
+            13 * Math.cos(t) -
+            5 * Math.cos(2 * t) -
+            2 * Math.cos(3 * t) -
+            Math.cos(4 * t);
+
+          // Scale dan posisi - TANPA KOREKSI KE KIRI
+          const scaledX = centerX + (x * size) / 18;
+          const scaledY = centerY - (y * size) / 18;
+
+          points.push({ x: scaledX, y: scaledY });
+        }
+
+        return points;
+      }
+
+      // Membentuk love besar di tengah SEMPURNA
+      function createHeartFormation() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        // Clear existing particles
+        clearAllParticles();
+
+        // Setup big heart di tengah SEMPURNA
+        setupBigHeart();
+
+        // Animate heart muncul di tengah SEMPURNA
+        setTimeout(() => {
+          animateHeartAppearance();
+
+          // Create heart cells setelah heart muncul
+          setTimeout(() => {
+            createHeartCells();
+          }, 1000);
+        }, 300);
+      }
+
+      // Clear all particles
+      function clearAllParticles() {
+        particles.forEach((particle) => {
+          if (particle.parentNode) {
+            particle.style.animation = "none";
+            particle.style.opacity = "0";
+            setTimeout(() => {
+              if (particle.parentNode) particle.remove();
+            }, 100);
+          }
+        });
+        particles = [];
+
+        // Clear interval jika masih ada
+        if (heartRainInterval) {
+          clearInterval(heartRainInterval);
+          heartRainInterval = null;
+        }
+      }
+
+      // Setup big heart di tengah SEMPURNA
+      function setupBigHeart() {
+        // Reset big heart ke posisi tengah viewport TANPA KOREKSI KE KIRI
+        bigHeart.style.position = "fixed";
+        bigHeart.style.top = "50%";
+        bigHeart.style.left = "50%";
+        bigHeart.style.opacity = "0";
+        bigHeart.style.transform = "translate(-50%, -50%) scale(0.3)"; // TANPA KOREKSI KE KIRI
+
+        // Clear existing cells
+        bigHeart.innerHTML = "";
+        heartCells = [];
+
+        // Reset animation
+        bigHeart.style.animation = "none";
+      }
+
+      // Animate heart muncul di tengah SEMPURNA
+      function animateHeartAppearance() {
+        // Heart muncul dari kecil ke besar di tengah viewport TANPA KOREKSI KE KIRI
+        bigHeart.style.opacity = "1";
+        bigHeart.style.transform = "translate(-50%, -50%) scale(1)"; // TANPA KOREKSI KE KIRI
+        bigHeart.style.transition =
+          "transform 2.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 2s ease";
+
+        // Add glow animation saja
+        setTimeout(() => {
+          bigHeart.style.animation = "glow 3s infinite";
+        }, 2500);
+      }
+
+      // Create heart cells untuk membentuk love besar DI TENGAH SEMPURNA
+      function createHeartCells() {
+        const centerX = 0;
+        const centerY = 0;
+        const heartSize =
+          Math.min(bigHeart.offsetWidth, bigHeart.offsetHeight) * 0.65;
+
+        // Generate heart points
+        const heartPoints = generateHeartPoints(centerX, centerY, heartSize);
+
+        // Create cells dengan jumlah optimal untuk rotasi smooth
+        const cellsNeeded = Math.min(heartPoints.length, 350);
+        const step = Math.floor(heartPoints.length / cellsNeeded);
+
+        for (let i = 0; i < heartPoints.length; i += step) {
+          if (heartCells.length >= cellsNeeded) break;
+
+          const point = heartPoints[i];
+          createHeartCell(point.x, point.y, heartCells.length, cellsNeeded);
+        }
+
+        // Animate cells appearance dengan efek rotasi profesional
+        setTimeout(() => {
+          heartCells.forEach((cell, index) => {
+            setTimeout(() => {
+              cell.style.opacity = "1";
+              const rotationSpeed = 20 + (index % 3) * 5;
+              const rotationDirection = index % 2 === 0 ? 1 : -1;
+
+              cell.style.animation = `
+                            gentleFloat ${6 + Math.random() * 4}s infinite ease-in-out,
+                            textRotation ${rotationSpeed}s linear infinite ${rotationDirection > 0 ? "normal" : "reverse"}
+                        `;
+
+              if (index % 5 === 0) {
+                const orbitRadius = 5 + (index % 3) * 8;
+                cell.style.setProperty("--orbit-radius", `${orbitRadius}px`);
+                cell.style.animation += `, orbitRotation ${15 + (index % 10) * 2}s linear infinite`;
+              }
+
+              cell.style.transform = "translate(-50%, -50%) scale(1)";
+            }, index * 10);
+          });
+
+          isHeartFormed = true;
+
+          isAnimating = false;
+        }, 800);
+      }
+
+      // Create individual heart cell DI TENGAH SEMPURNA
+      function createHeartCell(x, y, index, totalCells) {
+        const cell = document.createElement("div");
+        cell.className = "heart-cell";
+        cell.textContent = "I love you";
+
+        // Posisi relatif terhadap pusat bigHeart TANPA KOREKSI KE KIRI
+        cell.style.left = `calc(50% + ${x}px)`;
+        cell.style.top = `calc(50% + ${y}px)`;
+
+        // Warna berdasarkan posisi dalam bentuk untuk efek gradien
+        const hue = 330 + (index / totalCells) * 25;
+        const saturation = 90 + Math.random() * 10;
+        const lightness = 60 + Math.random() * 10;
+        cell.style.color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+        // Font size berdasarkan layar
+        const fontSize = Math.max(11, Math.min(16, window.innerWidth / 70));
+        cell.style.fontSize = `${fontSize}px`;
+
+        // Z-index berdasarkan posisi Y untuk efek kedalaman
+        const zIndex = Math.round(100 + y / 100);
+        cell.style.zIndex = zIndex;
+
+        // Opacity awal untuk transisi
+        cell.style.opacity = "0";
+
+        // Transform awal dengan rotasi acak
+        const initialRotation = Math.random() * 360;
+        cell.style.transform = `translate(-50%, -50%) scale(0.3) rotate(${initialRotation}deg)`;
+
+        bigHeart.appendChild(cell);
+        heartCells.push(cell);
+
+        return cell;
+      }
+
+      // Restart animation
+      function restartAnimation() {
+        if (isAnimating) return;
+
+        // Reset state
+        isHeartFormed = false;
+        isAnimating = true;
+
+        // Fade out heart cells
+        heartCells.forEach((cell) => {
+          cell.style.opacity = "0";
+          cell.style.transition = "opacity 0.8s ease";
+          setTimeout(() => {
+            if (cell.parentNode) cell.remove();
+          }, 800);
+        });
+        heartCells = [];
+
+        // Fade out big heart
+        bigHeart.style.opacity = "0";
+        bigHeart.style.animation = "none";
+
+        // Clear semua particles
+        clearAllParticles();
+
+        // Start over setelah delay
+        setTimeout(() => {
+          bigHeart.innerHTML = "";
+
+          // Mulai kembali dari awal
+          startIntroAnimations();
+        }, 1000);
+      }
+
+      // Start animation
+      window.addEventListener("load", init);
+
+      //Card
+      const cards = document.querySelectorAll(".msg-card");
+      let currentCard = 0;
+
+      //function showMessageCards() {
+      //if (currentCard >= cards.length) return;
+
+      // const card = cards[currentCard];
+      // card.style.opacity = "1";
+      // card.style.transform = "translateY(0) scale(1)";
+      // currentCard++;
+
+      //   setTimeout(showMessageCards, 1800);
+      // }
+
+      const cardList = document.querySelectorAll(".msg-card");
+
+      function showCard(index) {
+        cardList.forEach((card, i) => {
+          card.classList.toggle("active", i === index);
+        });
+      }
+
+      function nextCard() {
+        if (currentCard < cardList.length - 1) {
+          currentCard++;
+          showCard(currentCard);
+        }
+      }
+
+      function prevCard() {
+        if (currentCard > 0) {
+          currentCard--;
+          showCard(currentCard);
+        }
+      }
+
+      // auto muncul pertama
+      showCard(currentCard);
+
+      // Back button
+      document.getElementById("backBtn").addEventListener("click", () => {
+        location.href = "index.html";
+      });
+
+      // Reload
+      // Back button
+      document.getElementById("RepeatBtn").addEventListener("click", () => {
+        location.reload();
+      });
+    </script>
+  </body>
+</html>
